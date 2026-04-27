@@ -33,9 +33,11 @@
 |C3,C4,C7|積層セラミックコンデンサ (0.1μF)|村田製作所|[GCM188L81H104KA57](https://akizukidenshi.com/catalog/g/g116143/)|表面実装 (1608)|3|
 |C5|積層セラミックコンデンサ (10uF)|村田製作所|[GRM188R6YA106MA73](https://akizukidenshi.com/catalog/g/g113161/)|表面実装 (1608)|1|
 |D1|TVSダイオード|Panjit|[PEC3824C2A-AU](https://akizukidenshi.com/catalog/g/g129497/)|表面実装 (SOT-23)|1|
+|D2|ツェナーダイオード (15V)|ローム|[UDZV15B](https://akizukidenshi.com/catalog/g/g107433/)|表面実装 (SOD-323)|1|
 |D3|LED (赤)|OptoSupply|[OSHR1608C1A](https://akizukidenshi.com/catalog/g/g103978/)|表面実装 (1608)|1|
 |D4|LED (黄)|OptoSupply|[OSYG1608C1A](https://akizukidenshi.com/catalog/g/g103984/)|表面実装 (1608)|1|
 |D5|LED (黄緑)|OptoSupply|[OSYG1608C1A](https://akizukidenshi.com/catalog/g/g103980)|表面実装 (1608)|1|
+|F1|リセッタブルヒューズ (0.5A)|Bourns|[MF-NSMF050-2](https://akizukidenshi.com/catalog/g/g115300/)|表面実装|1|
 |J1|USB Type-C レセプタクル|Neltron Industrial|[5077CR-16-SMC2-BK-TR](https://akizukidenshi.com/catalog/g/g114356/)|スルーホール|1|
 |J2|TFカードスロット|ヒロセ電機|[DM3AT-SF-PEJM5](https://akizukidenshi.com/catalog/g/g102395/)|表面実装|1|
 |J3|1.27mmピッチ ピンヘッダ (1x40P)|Neltron Industrial|[2199SA-40G-3015-23](https://akizukidenshi.com/catalog/g/g103865/)|スルーホール (1.27mm)|1|
