@@ -9,9 +9,9 @@ void VisitorCounter::begin()
     _led_yellow.begin();
     _led_green.begin();
 
-    _led_red.on();
-    _led_yellow.on();
-    _led_green.on();
+    _led_red.off();
+    _led_yellow.off();
+    _led_green.off();
 
     // Switch
     _switch_1.begin();
@@ -44,12 +44,23 @@ void VisitorCounter::begin()
     {
         // 時刻未設定
         Serial.println("RTC is not configured time.");
-        return;
+        _led_red.on();
+        delay(100);
+        _led_red.off();
+        delay(100);
+        _led_red.on();
+        delay(100);
+        _led_red.off();
+        delay(100);
+        _led_red.on();
+        delay(100);
     }
 
     _is_rtc_configured = true;
 
     _led_red.off();
+    _led_yellow.on();
+    _led_green.on();
 
     // SDカード初期化
     init_sd();
