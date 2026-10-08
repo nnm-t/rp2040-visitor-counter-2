@@ -6,20 +6,30 @@
 #include <SD.h>
 
 #include <RTClib.h>
+#include <TM16xxIC.h>
 
 #include "led.h"
 #include "switch.h"
 #include "switch_number.h"
 #include "buzzer.h"
+#include "tm1627.h"
 
 class VisitorCounter
 {
     static constexpr const pin_size_t led_red_pin = 13;
     static constexpr const pin_size_t led_yellow_pin = 14;
     static constexpr const pin_size_t led_green_pin = 15;
+    static constexpr const pin_size_t led_blue_pin = 19;
+    
+    static constexpr const pin_size_t tm1627_dio_pin = 16;
+    static constexpr const pin_size_t tm1627_clk_pin = 17;
+    static constexpr const pin_size_t tm1627_stb_pin = 18;
 
     static constexpr const pin_size_t sw1_pin = 11;
     static constexpr const pin_size_t sw2_pin = 12;
+    static constexpr const pin_size_t sw3_pin = 20;
+    static constexpr const pin_size_t sw4_pin = 21;
+    static constexpr const pin_size_t sw5_pin = 22;
 
     static constexpr const pin_size_t buzzer_pin = 10;
 
@@ -45,15 +55,21 @@ class VisitorCounter
     LED _led_red = LED(led_red_pin, GPIOMode::Sink);
     LED _led_yellow = LED(led_yellow_pin, GPIOMode::Sink);
     LED _led_green = LED(led_green_pin, GPIOMode::Sink);
+    LED _led_blue = LED(led_blue_pin, GPIOMode::Sink);
 
     Switch _switch_1 = Switch(sw1_pin, INPUT_PULLUP);
     Switch _switch_2 = Switch(sw2_pin, INPUT_PULLUP);
+    Switch _switch_3 = Switch(sw3_pin, INPUT_PULLUP);
+    Switch _switch_4 = Switch(sw4_pin, INPUT_PULLUP);
+    Switch _switch_5 = Switch(sw5_pin, INPUT_PULLUP);
 
     Buzzer _buzzer = Buzzer(buzzer_pin);
 
     File _file = File();
 
     RTC_PCF8563 _pcf8563 = RTC_PCF8563();
+    TM16xxIC _tm16xx = TM16xxIC(IC_TM1627, tm1627_dio_pin, tm1627_clk_pin, tm1627_stb_pin);
+    TM1627 _tm1627 = TM1627(_tm16xx);
 
     char _str_buffer[str_buffer_size] = { 0 };
     size_t _str_current = 0;
