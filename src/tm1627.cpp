@@ -46,3 +46,40 @@ void TM1627::setDisplayMinus(const uint8_t position)
 {
     setSegments(segment_bit_minus, position);
 }
+
+bool TM1627::setDisplay(const int32_t value, const uint8_t end_position)
+{
+    if (value > 9999 | value < -999)
+    {
+        return false;
+    }
+
+    bool show_minus = false;
+
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        const int32_t cardinal = std::pow(10, 1 + i);
+        const int8_t position = end_position - i;
+
+        if (position < 0)
+        {
+            break;
+        }
+
+        if (value / cardinal < 1)
+        {
+            if (value < 0 && !show_minus)
+            {
+                setDisplayMinus(position);
+                show_minus = true;
+            }
+
+            clearDisplayDigit(end_position - i);
+            continue;
+        }
+
+        setDisplayDigit(value % cardinal, position);
+    }
+
+    return true;
+}

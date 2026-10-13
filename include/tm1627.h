@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cmath>
+
 #include <Arduino.h>
 #include <TM16xxIC.h>
 
@@ -48,4 +50,5 @@ public:
     void setSegments(const uint8_t segments, const uint8_t position);
     void setDisplayDigit(const uint8_t digit, const uint8_t position);
     void setDisplayMinus(const uint8_t position);
+    bool setDisplay(const int32_t value, const uint8_t end_position);
 };
