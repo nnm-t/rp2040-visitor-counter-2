@@ -15,6 +15,14 @@ void TM1627::clearDisplayDigit(const uint8_t position)
     setSegments(segment_bit_empty, position);
 }
 
+void TM1627::clearDisplayDigit(const uint8_t begin_position, const uint8_t end_position)
+{
+    for (uint8_t i = begin_position; i < end_position + 1; i++)
+    {
+        clearDisplayDigit(i);
+    }
+}
+
 void TM1627::setSegments(const uint8_t segments, const uint8_t position)
 {
     if (position >= max_digit)
@@ -47,7 +55,7 @@ void TM1627::setDisplayMinus(const uint8_t position)
     setSegments(segment_bit_minus, position);
 }
 
-bool TM1627::setDisplay(const int32_t value, const uint8_t end_position)
+bool TM1627::setDisplay(const int32_t value, const uint8_t end_position, const uint8_t digits)
 {
     if (value > 9999 | value < -999)
     {
@@ -56,7 +64,7 @@ bool TM1627::setDisplay(const int32_t value, const uint8_t end_position)
 
     bool show_minus = false;
 
-    for (uint8_t i = 0; i < 4; i++)
+    for (uint8_t i = 0; i < digits; i++)
     {
         const int32_t cardinal = std::pow(10, 1 + i);
         const int8_t position = end_position - i;

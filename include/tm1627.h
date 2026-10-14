@@ -46,9 +46,10 @@ public:
 
     void clearDisplay();
     void clearDisplayDigit(const uint8_t position);
+    void clearDisplayDigit(const uint8_t begin_position, const uint8_t end_position);
 
     void setSegments(const uint8_t segments, const uint8_t position);
     void setDisplayDigit(const uint8_t digit, const uint8_t position);
     void setDisplayMinus(const uint8_t position);
-    bool setDisplay(const int32_t value, const uint8_t end_position);
+    bool setDisplay(const int32_t value, const uint8_t end_position, const uint8_t digits = 4);
 };

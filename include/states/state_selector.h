@@ -25,4 +25,10 @@ public:
     void to_main_state();
     void to_battery_state();
     void to_adjust_state();
+
+    void on_switch_1_pressed();
+    void on_switch_2_pressed();
+    void on_switch_3_pressed();
+    void on_switch_4_pressed();
+    void on_switch_5_pressed();
 };

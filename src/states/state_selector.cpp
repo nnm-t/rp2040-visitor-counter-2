@@ -47,3 +47,28 @@ void StateSelector::to_adjust_state()
 {
     switch_state(adjust_state);
 }
+
+void StateSelector::on_switch_1_pressed()
+{
+    _current->on_switch_1_pressed();
+}
+
+void StateSelector::on_switch_2_pressed()
+{
+    _current->on_switch_2_pressed();
+}
+
+void StateSelector::on_switch_3_pressed()
+{
+    _current->on_switch_3_pressed();
+}
+
+void StateSelector::on_switch_4_pressed()
+{
+    _current->on_switch_4_pressed();
+}
+
+void StateSelector::on_switch_5_pressed()
+{
+    _current->on_switch_5_pressed();
+}

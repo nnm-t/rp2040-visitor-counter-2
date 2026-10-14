@@ -4,18 +4,29 @@ VisitorCounter* VisitorCounter::_instance;
 
 void VisitorCounter::begin()
 {
+    _main_state.write_csv_func = [&] (const SwitchNumber switch_number) { write_csv(switch_number); };
+    _state_selector.main_state = &_main_state;
+    _state_selector.battery_state = &_battery_state;
+    _state_selector.adjust_state = &_adjust_state;
+    _state_selector.begin();
+
     // LED
     _led_red.begin();
     _led_yellow.begin();
     _led_green.begin();
+    _led_blue.begin();
 
     _led_red.off();
     _led_yellow.off();
     _led_green.off();
+    _led_blue.off();
 
     // Switch
     _switch_1.begin();
     _switch_2.begin();
+    _switch_3.begin();
+    _switch_4.begin();
+    _switch_5.begin();
 
     // Buzzer
     _buzzer.begin();
@@ -69,7 +80,7 @@ void VisitorCounter::begin()
 
     _led_red.off();
     _led_yellow.on();
-    _led_green.on();
+    _led_blue.on();
 
     // SDカード初期化
     init_sd();
@@ -80,97 +91,45 @@ void VisitorCounter::update(const uint32_t delay_ms)
     // USB CDC読み込み時刻設定
     read_serial();
 
+    // LED周期処理
+    _led_red.update();
+    _led_yellow.update();
+    _led_green.update();
+    _led_blue.update();
+
     // これ以下は要RTC設定
     if (!_is_rtc_configured)
     {
         return;
     }
 
-    if (_power_count < 50)
-    {
-        _led_yellow.on();
-    }
-    else
-    {
-        _led_yellow.off();
-    }
-
-    _power_count += delay_ms;
-
-    if (_power_count >= 3000)
-    {
-        _power_count = 0;
-    }
-
-    if (_switch_1_pressed)
-    {
-        if (_switch_count == 0)
-        {
-            // SW1押した直後
-            _led_red.on();
-            _buzzer.beep(buzzer_frequency_hz, buzzer_duration_ms);
-
-            // CSV出力
-            write_csv(SwitchNumber::Switch1);
-        }
-
-        if (_switch_count >= 1000)
-        {
-            // 1s経過後
-            _switch_count = 0;
-            _switch_1_pressed = false;
-            _led_red.off();
-        }
-        else
-        {
-            _switch_count += delay_ms;
-        }
-    }
-
-    if (_switch_2_pressed)
-    {
-        if (_switch_count == 0)
-        {
-            // SW2押した直後
-            _led_green.on();
-            _buzzer.beep(buzzer_frequency_hz, buzzer_duration_ms);
-
-            // CSV出力
-            write_csv(SwitchNumber::Switch2);
-        }
-
-        if (_switch_count >= 1000)
-        {
-            // 1s経過後
-            _switch_count = 0;
-            _switch_2_pressed = false;
-            _led_green.off();
-        }
-        else
-        {
-            _switch_count += delay_ms;
-        }
-    }
+    // state処理
+    _state_selector.update();
 }
 
 void VisitorCounter::on_switch_1_pressed()
 {
-    if (_instance->_switch_2_pressed)
-    {
-        return;
-    }
-
-    _instance->_switch_1_pressed = true;
+    _instance->_state_selector.on_switch_1_pressed();
 }
 
 void VisitorCounter::on_switch_2_pressed()
 {
-    if (_instance->_switch_1_pressed)
-    {
-        return;
-    }
+    _instance->_state_selector.on_switch_2_pressed();
+}
 
-    _instance->_switch_2_pressed = true;
+void VisitorCounter::on_switch_3_pressed()
+{
+    _instance->_state_selector.on_switch_3_pressed();
+}
+
+void VisitorCounter::on_switch_4_pressed()
+{
+    _instance->_state_selector.on_switch_4_pressed();
+}
+
+void VisitorCounter::on_switch_5_pressed()
+{
+    _instance->_state_selector.on_switch_5_pressed();
 }
 
 void VisitorCounter::read_serial()
@@ -257,7 +216,7 @@ void VisitorCounter::read_serial()
 
 void VisitorCounter::init_sd()
 {
-    if (_is_csv_opened)
+    if (_file)
     {
         return;
     }
@@ -271,7 +230,7 @@ void VisitorCounter::init_sd()
         return;
     }
 
-    _led_green.off();
+    _led_blue.off();
 
     // 時刻取得
     const DateTime date_time = _pcf8563.now();
@@ -292,13 +251,11 @@ void VisitorCounter::init_sd()
         return;
     }
 
-    _is_csv_opened = true;
-
     // ファイル開いた
     snprintf(message, sizeof(message), "Write data to %s.", file_name);
     Serial.println(message);
 
-    _led_yellow.off();
+    _led_yellow.blink(50, 2950);
 
     // GPIO割り込み有効化
     init_gpio_interrupt();
@@ -309,11 +266,14 @@ void VisitorCounter::init_gpio_interrupt()
     // Switch 割り込み有効化
     _switch_1.attach_interrupt(on_switch_1_pressed, LOW);
     _switch_2.attach_interrupt(on_switch_2_pressed, LOW);
+    _switch_3.attach_interrupt(on_switch_3_pressed, LOW);
+    _switch_4.attach_interrupt(on_switch_4_pressed, LOW);
+    _switch_5.attach_interrupt(on_switch_5_pressed, LOW);
 }
 
 void VisitorCounter::write_csv(const SwitchNumber switch_number)
 {
-    if (!_is_csv_opened || !_is_rtc_configured || !_file)
+    if (!_file)
     {
         return;
     }

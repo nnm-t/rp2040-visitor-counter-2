@@ -14,6 +14,11 @@
 #include "buzzer.h"
 #include "tm1627.h"
 
+#include "states/state_selector.h"
+#include "states/main_state.h"
+#include "states/battery_state.h"
+#include "states/adjust_state.h"
+
 class VisitorCounter
 {
     static constexpr const pin_size_t led_red_pin = 13;
@@ -47,9 +52,6 @@ class VisitorCounter
 
     static constexpr const size_t str_buffer_size = 128;
 
-    static constexpr const uint32_t buzzer_frequency_hz = 2000;
-    static constexpr const uint32_t buzzer_duration_ms = 50;
-
     static VisitorCounter* _instance;
 
     LED _led_red = LED(led_red_pin, GPIOMode::Sink);
@@ -74,18 +76,18 @@ class VisitorCounter
     char _str_buffer[str_buffer_size] = { 0 };
     size_t _str_current = 0;
 
+    StateSelector _state_selector = StateSelector();
+    MainState _main_state = MainState(_state_selector, _led_red, _led_green, _buzzer);
+    BatteryState _battery_state = BatteryState(_state_selector, _tm1627);
+    AdjustState _adjust_state = AdjustState(_state_selector, _pcf8563, _tm1627);
+
     bool _is_rtc_configured = false;
-    bool _is_csv_opened = false;
-
-    bool _switch_1_pressed = false;
-    bool _switch_2_pressed = false;
-    uint32_t _switch_count = 0;
-
-    uint32_t _power_count = 0;
 
     static void on_switch_1_pressed();
-
     static void on_switch_2_pressed();
+    static void on_switch_3_pressed();
+    static void on_switch_4_pressed();
+    static void on_switch_5_pressed();
 
     void read_serial();
 
