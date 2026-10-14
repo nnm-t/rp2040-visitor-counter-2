@@ -53,11 +53,6 @@ void VisitorCounter::begin()
     _tm1627.begin(1);
     _tm1627.clearDisplay();
 
-    _tm1627.setDisplayDigit(1, 0);
-    _tm1627.setDisplayDigit(2, 1);
-    _tm1627.setDisplayDigit(3, 2);
-    _tm1627.setDisplayDigit(4, 3);
-
     // PCF8563
     _pcf8563.begin();
     if (_pcf8563.lostPower())
