@@ -10,6 +10,8 @@ void VisitorCounter::begin()
     _state_selector.adjust_state = &_adjust_state;
     _state_selector.begin();
 
+    analogReadResolution(12);
+
     // LED
     _led_red.begin();
     _led_yellow.begin();

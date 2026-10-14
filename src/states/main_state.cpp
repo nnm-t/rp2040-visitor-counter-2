@@ -15,6 +15,7 @@ void MainState::update()
     switch (_pressed_switch)
     {
         case SwitchNumber::Switch1:
+            _switch_press_ms = millis();
             // SW1押した直後
             _led_red.on();
             _buzzer.beep(buzzer_frequency_hz, buzzer_duration_ms);
@@ -26,6 +27,7 @@ void MainState::update()
             }
             break;
         case SwitchNumber::Switch2:
+            _switch_press_ms = millis();
             // SW2押した直後
             _led_green.on();
             _buzzer.beep(buzzer_frequency_hz, buzzer_duration_ms);
@@ -52,4 +54,9 @@ void MainState::on_switch_1_pressed()
 void MainState::on_switch_2_pressed()
 {
     _pressed_switch = SwitchNumber::Switch2;
+}
+
+void MainState::on_switch_3_pressed()
+{
+    _selector.to_battery_state();
 }

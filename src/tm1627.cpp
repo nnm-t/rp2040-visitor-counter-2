@@ -66,7 +66,8 @@ bool TM1627::setDisplay(const int32_t value, const uint8_t end_position, const u
 
     for (uint8_t i = 0; i < digits; i++)
     {
-        const int32_t cardinal = std::pow(10, 1 + i);
+        const int32_t cardinal_p1 = std::pow(10, 1 + i);
+        const int32_t cardinal_p0 = std::pow(10, i);
         const int8_t position = end_position - i;
 
         if (position < 0)
@@ -74,7 +75,7 @@ bool TM1627::setDisplay(const int32_t value, const uint8_t end_position, const u
             break;
         }
 
-        if (value / cardinal < 1)
+        if (value / cardinal_p0 < 1)
         {
             if (value < 0 && !show_minus)
             {
@@ -86,7 +87,7 @@ bool TM1627::setDisplay(const int32_t value, const uint8_t end_position, const u
             continue;
         }
 
-        setDisplayDigit(value % cardinal, position);
+        setDisplayDigit((value % cardinal_p1) / cardinal_p0, position);
     }
 
     return true;
