@@ -25,6 +25,8 @@ void MainState::update()
             {
                 write_csv_func(SwitchNumber::Switch1);
             }
+
+            _pressed_switch = SwitchNumber::None;
             break;
         case SwitchNumber::Switch2:
             _switch_press_ms = millis();
@@ -37,9 +39,10 @@ void MainState::update()
             {
                 write_csv_func(SwitchNumber::Switch2);
             }
+
+            _pressed_switch = SwitchNumber::None;
             break;
         default:
-            _pressed_switch = SwitchNumber::None;
             _led_red.off();
             _led_green.off();
             break;
