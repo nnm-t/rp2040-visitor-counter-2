@@ -9,7 +9,6 @@ void VisitorCounter::begin()
     _state_selector.main_state = &_main_state;
     _state_selector.battery_state = &_battery_state;
     _state_selector.adjust_state = &_adjust_state;
-    _state_selector.begin();
 
     analogReadResolution(12);
 
@@ -97,6 +96,8 @@ void VisitorCounter::begin()
     delay(300);
     _tm1627.clearDisplay();
     delay(100);
+
+    _state_selector.begin();
 }
 
 void VisitorCounter::update(const uint32_t delay_ms)
@@ -295,8 +296,6 @@ void VisitorCounter::init_sd()
     // ファイル開いた
     snprintf(message, sizeof(message), "Write data to %s.", file_name);
     Serial.println(message);
-
-    _led_yellow.blink(50, 2950);
 
     // GPIO割り込み有効化
     init_gpio_interrupt();

@@ -23,6 +23,17 @@ void AdjustState::update()
         _tm1627.clearDisplay();
 
         _is_adjust_finished = false;
+
+        // blink
+        _led_yellow.on();
+        delay(100);
+        _led_yellow.off();
+        delay(100);
+        _led_yellow.on();
+        delay(100);
+        _led_yellow.off();
+        delay(100);
+
         // to MainState
         _selector.to_main_state();
         return;

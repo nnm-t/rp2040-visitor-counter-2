@@ -63,7 +63,7 @@ bool TM1627::setDisplay(const int32_t value, const uint8_t end_position, const u
         return false;
     }
 
-    bool show_minus = false;
+    // bool show_minus = false;
 
     for (uint8_t i = 0; i < digits; i++)
     {
@@ -78,6 +78,8 @@ bool TM1627::setDisplay(const int32_t value, const uint8_t end_position, const u
 
         if (value / cardinal_p0 < 1)
         {
+            // マイナス表示使用せずゼロ埋め
+            /*
             if (value < 0 && !show_minus)
             {
                 setDisplayMinus(position);
@@ -85,6 +87,8 @@ bool TM1627::setDisplay(const int32_t value, const uint8_t end_position, const u
             }
 
             clearDisplayDigit(end_position - i);
+            */
+            setDisplayDigit(0, position);
             continue;
         }
 

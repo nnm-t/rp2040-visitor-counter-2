@@ -4,6 +4,7 @@
 #include <RTClib.h>
 
 #include "tm1627.h"
+#include "led.h"
 #include "led_7seg_color.h"
 #include "states/i_state.h"
 #include "states/state_selector.h"
@@ -22,6 +23,7 @@ class AdjustState : public IState
     StateSelector& _selector;
     RTC_PCF8563& _pcf8563;
     TM1627& _tm1627;
+    LED& _led_yellow;
 
     AdjustMode _mode = AdjustMode::Years;
     uint16_t _year = 0;
@@ -35,7 +37,7 @@ class AdjustState : public IState
     void show_7seg(const int32_t value, const LED7SegColor color);
 
 public:
-    AdjustState(StateSelector& selector, RTC_PCF8563& pcf8563, TM1627& tm1627) : _selector(selector), _pcf8563(pcf8563), _tm1627(tm1627)
+    AdjustState(StateSelector& selector, RTC_PCF8563& pcf8563, TM1627& tm1627, LED& led_yellow) : _selector(selector), _pcf8563(pcf8563), _tm1627(tm1627), _led_yellow(led_yellow)
     {
 
     }

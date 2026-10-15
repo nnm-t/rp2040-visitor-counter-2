@@ -18,6 +18,7 @@ class MainState : public IState
 
     StateSelector& _selector;
     LED& _led_red;
+    LED& _led_yellow;
     LED& _led_green;
     Buzzer& _buzzer;
 
@@ -28,7 +29,7 @@ class MainState : public IState
 public:
     std::function<void(const SwitchNumber)> write_csv_func = nullptr;
 
-    MainState(StateSelector& selector, LED& led_red, LED& led_green, Buzzer& buzzer) : _selector(selector), _led_red(led_red), _led_green(led_green), _buzzer(buzzer)
+    MainState(StateSelector& selector, LED& led_red, LED& led_yellow, LED& led_green, Buzzer& buzzer) : _selector(selector), _led_red(led_red), _led_yellow(led_yellow), _led_green(led_green), _buzzer(buzzer)
     {
 
     }

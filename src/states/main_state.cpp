@@ -2,7 +2,7 @@
 
 void MainState::begin()
 {
-
+    _led_yellow.blink(50, 2950);
 }
 
 void MainState::update()
