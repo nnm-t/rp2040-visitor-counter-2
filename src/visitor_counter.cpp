@@ -1,6 +1,7 @@
 #include "visitor_counter.h"
 
 VisitorCounter* VisitorCounter::_instance;
+uint32_t VisitorCounter::_last_pressed_ms = 0;
 
 void VisitorCounter::begin()
 {
@@ -60,6 +61,7 @@ void VisitorCounter::begin()
     if (_pcf8563.lostPower())
     {
         // 時刻未設定
+        // todo: USB給電を切ると電池があってもフラグが立ってしまう
         Serial.println("RTC is not configured time.");
         _led_red.on();
         delay(100);
@@ -73,14 +75,28 @@ void VisitorCounter::begin()
         delay(100);
     }
 
-    _is_rtc_configured = true;
-
     _led_red.off();
     _led_yellow.on();
     _led_blue.on();
 
     // SDカード初期化
     init_sd();
+
+    // 日時表示
+    const DateTime date_time = _pcf8563.now();
+    _tm1627.setDisplay(date_time.year(), 3);
+    _tm1627.setDisplay(date_time.year(), 7);
+    delay(300);
+    _tm1627.clearDisplay();
+    delay(100);
+    _tm1627.setDisplay(date_time.month() * 100 + date_time.day(), 3);
+    delay(300);
+    _tm1627.clearDisplay();
+    delay(100);
+    _tm1627.setDisplay(date_time.hour() * 100 + date_time.minute(), 7);
+    delay(300);
+    _tm1627.clearDisplay();
+    delay(100);
 }
 
 void VisitorCounter::update(const uint32_t delay_ms)
@@ -94,38 +110,68 @@ void VisitorCounter::update(const uint32_t delay_ms)
     _led_green.update();
     _led_blue.update();
 
-    // これ以下は要RTC設定
-    if (!_is_rtc_configured)
-    {
-        return;
-    }
-
     // state処理
     _state_selector.update();
 }
 
+bool VisitorCounter::anti_chattering()
+{
+    if (millis() < _last_pressed_ms + chattering_interval_ms)
+    {
+        return false;
+    }
+
+    _last_pressed_ms = millis();
+    return true;
+}
+
 void VisitorCounter::on_switch_1_pressed()
 {
+    if (!anti_chattering())
+    {
+        return;
+    }
+
     _instance->_state_selector.on_switch_1_pressed();
 }
 
 void VisitorCounter::on_switch_2_pressed()
 {
+    if (!anti_chattering())
+    {
+        return;
+    }
+
     _instance->_state_selector.on_switch_2_pressed();
 }
 
 void VisitorCounter::on_switch_3_pressed()
 {
+    if (!anti_chattering())
+    {
+        return;
+    }
+
     _instance->_state_selector.on_switch_3_pressed();
 }
 
 void VisitorCounter::on_switch_4_pressed()
 {
+    if (!anti_chattering())
+    {
+        return;
+    }
+
     _instance->_state_selector.on_switch_4_pressed();
 }
 
 void VisitorCounter::on_switch_5_pressed()
 {
+    if (!anti_chattering())
+    {
+        return;
+    }
+
     _instance->_state_selector.on_switch_5_pressed();
 }
 
@@ -191,8 +237,6 @@ void VisitorCounter::read_serial()
             {
                 // 設定完了
                 Serial.println("RTC configure OK.");
-
-                _is_rtc_configured = true;
 
                 _led_red.off();
 
@@ -261,11 +305,11 @@ void VisitorCounter::init_sd()
 void VisitorCounter::init_gpio_interrupt()
 {
     // Switch 割り込み有効化
-    _switch_1.attach_interrupt(on_switch_1_pressed, LOW);
-    _switch_2.attach_interrupt(on_switch_2_pressed, LOW);
-    _switch_3.attach_interrupt(on_switch_3_pressed, LOW);
-    _switch_4.attach_interrupt(on_switch_4_pressed, LOW);
-    _switch_5.attach_interrupt(on_switch_5_pressed, LOW);
+    _switch_1.attach_interrupt(on_switch_1_pressed, FALLING);
+    _switch_2.attach_interrupt(on_switch_2_pressed, FALLING);
+    _switch_3.attach_interrupt(on_switch_3_pressed, FALLING);
+    _switch_4.attach_interrupt(on_switch_4_pressed, FALLING);
+    _switch_5.attach_interrupt(on_switch_5_pressed, FALLING);
 }
 
 void VisitorCounter::write_csv(const SwitchNumber switch_number)

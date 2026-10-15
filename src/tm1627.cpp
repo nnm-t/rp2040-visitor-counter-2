@@ -8,6 +8,7 @@ void TM1627::begin(const uint8_t intensity)
 void TM1627::clearDisplay()
 {
     _tm16xx.clearDisplay();
+    clearDisplayDigit(0, 7);
 }
 
 void TM1627::clearDisplayDigit(const uint8_t position)

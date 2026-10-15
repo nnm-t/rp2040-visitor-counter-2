@@ -50,9 +50,12 @@ class VisitorCounter
     static constexpr const pin_size_t uart0_rx = 1;
     static constexpr const uint32_t uart_baud = 115200;
 
+    static constexpr const uint32_t chattering_interval_ms = 250;
+
     static constexpr const size_t str_buffer_size = 128;
 
     static VisitorCounter* _instance;
+    static uint32_t _last_pressed_ms;
 
     LED _led_red = LED(led_red_pin, GPIOMode::Sink);
     LED _led_yellow = LED(led_yellow_pin, GPIOMode::Sink);
@@ -81,7 +84,7 @@ class VisitorCounter
     BatteryState _battery_state = BatteryState(_state_selector, _tm1627);
     AdjustState _adjust_state = AdjustState(_state_selector, _pcf8563, _tm1627);
 
-    bool _is_rtc_configured = false;
+    static bool anti_chattering();
 
     static void on_switch_1_pressed();
     static void on_switch_2_pressed();

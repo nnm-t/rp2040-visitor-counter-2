@@ -30,6 +30,8 @@ class AdjustState : public IState
     uint8_t _hour = 0;
     uint8_t _minute = 0;
 
+    bool _is_adjust_finished = false;
+
     void show_7seg(const int32_t value, const LED7SegColor color);
 
 public:

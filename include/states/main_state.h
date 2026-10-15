@@ -40,4 +40,5 @@ public:
     void on_switch_1_pressed() override;
     void on_switch_2_pressed() override;
     void on_switch_3_pressed() override;
+    void on_switch_5_pressed() override;
 };

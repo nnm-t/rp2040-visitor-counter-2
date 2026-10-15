@@ -60,3 +60,8 @@ void MainState::on_switch_3_pressed()
 {
     _selector.to_battery_state();
 }
+
+void MainState::on_switch_5_pressed()
+{
+    _selector.to_adjust_state();
+}

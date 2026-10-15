@@ -14,6 +14,20 @@ void AdjustState::begin()
 
 void AdjustState::update()
 {
+    if (_is_adjust_finished)
+    {
+        // 設定反映
+        DateTime date_time(_year, _month, _day, _hour, _minute);
+        _pcf8563.adjust(date_time);
+
+        _tm1627.clearDisplay();
+
+        _is_adjust_finished = false;
+        // to MainState
+        _selector.to_main_state();
+        return;
+    }
+
     switch (_mode)
     {
         case AdjustMode::Months:
@@ -27,7 +41,7 @@ void AdjustState::update()
     }
 
     // 変更中の2桁をblink
-    if (millis() % 200 < 100)
+    if (millis() % 500 < 250)
     {
         switch (_mode)
         {
@@ -36,7 +50,7 @@ void AdjustState::update()
                 break;
             case AdjustMode::Months:
                 _tm1627.clearDisplayDigit(0, 1);
-                _tm1627.setDisplay(_day, 4, 2);
+                _tm1627.setDisplay(_day, 3, 2);
                 break;
             case AdjustMode::Days:
                 _tm1627.setDisplay(_month, 1, 2);
@@ -44,10 +58,10 @@ void AdjustState::update()
                 break;
             case AdjustMode::Hours:
                 _tm1627.clearDisplayDigit(4, 5);
-                _tm1627.setDisplay(_hour, 7, 2);
+                _tm1627.setDisplay(_minute, 7, 2);
                 break;
             case AdjustMode::Minutes:
-                _tm1627.setDisplay(_minute, 5, 2);
+                _tm1627.setDisplay(_hour, 5, 2);
                 _tm1627.clearDisplayDigit(6, 7);
                 _tm1627.clearDisplayDigit(7);
                 break;
@@ -95,6 +109,49 @@ void AdjustState::show_7seg(const int32_t value, const LED7SegColor color)
 }
 
 void AdjustState::on_switch_3_pressed()
+{
+    // decrement
+    switch (_mode)
+    {
+        case AdjustMode::Years:
+            if (_year <= 2000)
+            {
+                break;
+            }
+            _year--;
+            break;
+        case AdjustMode::Months:
+            if (_month <= 1)
+            {
+                break;
+            }
+            _month--;
+            break;
+        case AdjustMode::Days:
+            if (_day <= 1)
+            {
+                break;
+            }
+            _day--;
+            break;
+        case AdjustMode::Hours:
+            if (_hour <= 0)
+            {
+                break;
+            }
+            _hour--;
+            break;
+        case AdjustMode::Minutes:
+            if (_minute <= 0)
+            {
+                break;
+            }
+            _minute--;
+            break;
+    }
+}
+
+void AdjustState::on_switch_4_pressed()
 {
     // increment
     switch (_mode)
@@ -166,49 +223,6 @@ void AdjustState::on_switch_3_pressed()
     }
 }
 
-void AdjustState::on_switch_4_pressed()
-{
-    // decrement
-    switch (_mode)
-    {
-        case AdjustMode::Years:
-            if (_year <= 2000)
-            {
-                break;
-            }
-            _year--;
-            break;
-        case AdjustMode::Months:
-            if (_month <= 1)
-            {
-                break;
-            }
-            _month--;
-            break;
-        case AdjustMode::Days:
-            if (_day <= 1)
-            {
-                break;
-            }
-            _day--;
-            break;
-        case AdjustMode::Hours:
-            if (_hour <= 0)
-            {
-                break;
-            }
-            _hour--;
-            break;
-        case AdjustMode::Minutes:
-            if (_minute <= 0)
-            {
-                break;
-            }
-            _minute--;
-            break;
-    }
-}
-
 void AdjustState::on_switch_5_pressed()
 {
     // Mode increment
@@ -227,13 +241,8 @@ void AdjustState::on_switch_5_pressed()
             _mode = AdjustMode::Minutes;
             break;
         case AdjustMode::Minutes:
-        {
             // Adjust
-            DateTime date_time(_year, _month, _day, _hour, _minute);
-            _pcf8563.adjust(date_time);
-            // to MainState
-            _selector.to_main_state();
-            return;
-        }
+            _is_adjust_finished = true;
+            break;
     }
 }
