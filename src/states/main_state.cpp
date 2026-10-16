@@ -18,12 +18,13 @@ void MainState::update()
             _switch_press_ms = millis();
             // SW1押した直後
             _led_red.on();
+            _counter.increment(SwitchNumber::Switch1);
             _buzzer.beep(buzzer_frequency_hz, buzzer_duration_ms);
 
-            // CSV出力
-            if (write_csv_func != nullptr)
+            // JSON書込, CSV出力
+            if (pressed_func != nullptr)
             {
-                write_csv_func(SwitchNumber::Switch1);
+                pressed_func(SwitchNumber::Switch1);
             }
 
             _pressed_switch = SwitchNumber::None;
@@ -32,12 +33,13 @@ void MainState::update()
             _switch_press_ms = millis();
             // SW2押した直後
             _led_green.on();
+            _counter.increment(SwitchNumber::Switch2);
             _buzzer.beep(buzzer_frequency_hz, buzzer_duration_ms);
 
-            // CSV出力
-            if (write_csv_func != nullptr)
+            // JSON書込, CSV出力
+            if (pressed_func != nullptr)
             {
-                write_csv_func(SwitchNumber::Switch2);
+                pressed_func(SwitchNumber::Switch2);
             }
 
             _pressed_switch = SwitchNumber::None;
@@ -45,6 +47,7 @@ void MainState::update()
         default:
             _led_red.off();
             _led_green.off();
+            _counter.clear_7seg();
             break;
     }
 }

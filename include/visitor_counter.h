@@ -13,6 +13,7 @@
 #include "switch_number.h"
 #include "buzzer.h"
 #include "tm1627.h"
+#include "counter.h"
 
 #include "states/state_selector.h"
 #include "states/main_state.h"
@@ -79,8 +80,10 @@ class VisitorCounter
     char _str_buffer[str_buffer_size] = { 0 };
     size_t _str_current = 0;
 
+    Counter _counter = Counter(_pcf8563, _tm1627);
+
     StateSelector _state_selector = StateSelector();
-    MainState _main_state = MainState(_state_selector, _led_red, _led_yellow, _led_green, _buzzer);
+    MainState _main_state = MainState(_state_selector, _counter, _led_red, _led_yellow, _led_green, _buzzer);
     BatteryState _battery_state = BatteryState(_state_selector, _tm1627);
     AdjustState _adjust_state = AdjustState(_state_selector, _pcf8563, _tm1627, _led_yellow);
 

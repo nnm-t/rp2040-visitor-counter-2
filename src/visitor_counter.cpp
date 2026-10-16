@@ -5,7 +5,11 @@ uint32_t VisitorCounter::_last_pressed_ms = 0;
 
 void VisitorCounter::begin()
 {
-    _main_state.write_csv_func = [&] (const SwitchNumber switch_number) { write_csv(switch_number); };
+    _main_state.pressed_func = [&] (const SwitchNumber switch_number)
+    {
+        write_csv(switch_number);
+        _counter.write_json();
+    };
     _state_selector.main_state = &_main_state;
     _state_selector.battery_state = &_battery_state;
     _state_selector.adjust_state = &_adjust_state;
@@ -80,6 +84,9 @@ void VisitorCounter::begin()
 
     // SDカード初期化
     init_sd();
+
+    // GPIO割り込み有効化
+    init_gpio_interrupt();
 
     // 日時表示
     const DateTime date_time = _pcf8563.now();
@@ -274,6 +281,8 @@ void VisitorCounter::init_sd()
 
     _led_blue.off();
 
+    _counter.read_json();
+
     // 時刻取得
     const DateTime date_time = _pcf8563.now();
     // ファイル名生成
@@ -296,9 +305,6 @@ void VisitorCounter::init_sd()
     // ファイル開いた
     snprintf(message, sizeof(message), "Write data to %s.", file_name);
     Serial.println(message);
-
-    // GPIO割り込み有効化
-    init_gpio_interrupt();
 }
 
 void VisitorCounter::init_gpio_interrupt()

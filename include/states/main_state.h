@@ -7,6 +7,7 @@
 #include "led.h"
 #include "buzzer.h"
 #include "switch_number.h"
+#include "counter.h"
 
 #include "states/i_state.h"
 #include "states/state_selector.h"
@@ -17,6 +18,7 @@ class MainState : public IState
     static constexpr const uint32_t buzzer_duration_ms = 50;
 
     StateSelector& _selector;
+    Counter& _counter;
     LED& _led_red;
     LED& _led_yellow;
     LED& _led_green;
@@ -27,9 +29,9 @@ class MainState : public IState
 
 
 public:
-    std::function<void(const SwitchNumber)> write_csv_func = nullptr;
+    std::function<void(const SwitchNumber)> pressed_func = nullptr;
 
-    MainState(StateSelector& selector, LED& led_red, LED& led_yellow, LED& led_green, Buzzer& buzzer) : _selector(selector), _led_red(led_red), _led_yellow(led_yellow), _led_green(led_green), _buzzer(buzzer)
+    MainState(StateSelector& selector, Counter& counter, LED& led_red, LED& led_yellow, LED& led_green, Buzzer& buzzer) : _selector(selector), _counter(counter), _led_red(led_red), _led_yellow(led_yellow), _led_green(led_green), _buzzer(buzzer)
     {
 
     }
